@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ImagePanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.udacity.catpoint.security.application</a>
+</div>
+
+<h1>Coverage Summary for Class: ImagePanel (com.udacity.catpoint.security.application)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImagePanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.udacity.catpoint.security.application;
+&nbsp;
+&nbsp;import com.udacity.catpoint.security.data.AlarmStatus;
+&nbsp;import com.udacity.catpoint.security.service.SecurityService;
+&nbsp;import net.miginfocom.swing.MigLayout;
+&nbsp;
+&nbsp;import javax.imageio.ImageIO;
+&nbsp;import javax.swing.*;
+&nbsp;import java.awt.*;
+&nbsp;import java.awt.image.BufferedImage;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;/** Panel containing the &#39;camera&#39; output. Allows users to &#39;refresh&#39; the camera
+&nbsp; * by uploading their own picture, and &#39;scan&#39; the picture, sending it for image analysis
+&nbsp; */
+&nbsp;public class ImagePanel extends JPanel implements StatusListener {
+&nbsp;    private SecurityService securityService;
+&nbsp;
+&nbsp;    private JLabel cameraHeader;
+&nbsp;    private JLabel cameraLabel;
+&nbsp;    private BufferedImage currentCameraImage;
+&nbsp;
+<b class="nc">&nbsp;    private int IMAGE_WIDTH = 300;</b>
+<b class="nc">&nbsp;    private int IMAGE_HEIGHT = 225;</b>
+&nbsp;
+&nbsp;    public ImagePanel(SecurityService securityService) {
+<b class="nc">&nbsp;        super();</b>
+<b class="nc">&nbsp;        setLayout(new MigLayout());</b>
+<b class="nc">&nbsp;        this.securityService = securityService;</b>
+<b class="nc">&nbsp;        securityService.addStatusListener(this);</b>
+&nbsp;
+<b class="nc">&nbsp;        cameraHeader = new JLabel(&quot;Camera Feed&quot;);</b>
+<b class="nc">&nbsp;        cameraHeader.setFont(StyleService.HEADING_FONT);</b>
+&nbsp;
+<b class="nc">&nbsp;        cameraLabel = new JLabel();</b>
+<b class="nc">&nbsp;        cameraLabel.setBackground(Color.WHITE);</b>
+<b class="nc">&nbsp;        cameraLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));</b>
+<b class="nc">&nbsp;        cameraLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));</b>
+&nbsp;
+&nbsp;        //button allowing users to select a file to be the current camera image
+<b class="nc">&nbsp;        JButton addPictureButton = new JButton(&quot;Refresh Camera&quot;);</b>
+<b class="nc">&nbsp;        addPictureButton.addActionListener(e -&gt; {</b>
+<b class="nc">&nbsp;            JFileChooser chooser = new JFileChooser();</b>
+<b class="nc">&nbsp;            chooser.setCurrentDirectory(new File(&quot;.&quot;));</b>
+<b class="nc">&nbsp;            chooser.setDialogTitle(&quot;Select Picture&quot;);</b>
+<b class="nc">&nbsp;            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);</b>
+<b class="nc">&nbsp;            if(chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            try {
+<b class="nc">&nbsp;                currentCameraImage = ImageIO.read(chooser.getSelectedFile());</b>
+<b class="nc">&nbsp;                Image tmp = new ImageIcon(currentCameraImage).getImage();</b>
+<b class="nc">&nbsp;                cameraLabel.setIcon(new ImageIcon(tmp.getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, Image.SCALE_SMOOTH)));</b>
+<b class="nc">&nbsp;            } catch (IOException |NullPointerException ioe) {</b>
+<b class="nc">&nbsp;                JOptionPane.showMessageDialog(null, &quot;Invalid image selected.&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            repaint();</b>
+&nbsp;        });
+&nbsp;
+&nbsp;        //button that sends the image to the image service
+<b class="nc">&nbsp;        JButton scanPictureButton = new JButton(&quot;Scan Picture&quot;);</b>
+<b class="nc">&nbsp;        scanPictureButton.addActionListener(e -&gt; {</b>
+<b class="nc">&nbsp;            securityService.processImage(currentCameraImage);</b>
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        add(cameraHeader, &quot;span 3, wrap&quot;);</b>
+<b class="nc">&nbsp;        add(cameraLabel, &quot;span 3, wrap&quot;);</b>
+<b class="nc">&nbsp;        add(addPictureButton);</b>
+<b class="nc">&nbsp;        add(scanPictureButton);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void notify(AlarmStatus status) {
+&nbsp;        //no behavior necessary
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void catDetected(boolean catDetected) {
+<b class="nc">&nbsp;        if(catDetected) {</b>
+<b class="nc">&nbsp;            cameraHeader.setText(&quot;DANGER - CAT DETECTED&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;        cameraHeader.setText(&quot;Camera Feed - No Cats Detected&quot;);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void sensorStatusChanged() {
+&nbsp;        //no behavior necessary
+<b class="nc">&nbsp;    }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-05 01:37</div>
+</div>
+</body>
+</html>

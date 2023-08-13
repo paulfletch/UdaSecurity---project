@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > SensorPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.udacity.catpoint.security.application</a>
+</div>
+
+<h1>Coverage Summary for Class: SensorPanel (com.udacity.catpoint.security.application)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SensorPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.udacity.catpoint.security.application;
+&nbsp;
+&nbsp;import com.udacity.catpoint.security.data.AlarmStatus;
+&nbsp;import com.udacity.catpoint.security.data.Sensor;
+&nbsp;import com.udacity.catpoint.security.data.SensorType;
+&nbsp;import com.udacity.catpoint.security.service.SecurityService;
+&nbsp;import net.miginfocom.swing.MigLayout;
+&nbsp;import javax.swing.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Panel that allows users to add sensors to their system. Sensors may be
+&nbsp; * manually set to &quot;active&quot; and &quot;inactive&quot; to test the system.
+&nbsp; */
+&nbsp;public class SensorPanel extends JPanel implements StatusListener{
+&nbsp;
+&nbsp;    private SecurityService securityService;
+&nbsp;
+<b class="nc">&nbsp;    private JLabel panelLabel = new JLabel(&quot;Sensor Management&quot;);</b>
+<b class="nc">&nbsp;    private JLabel newSensorName = new JLabel(&quot;Name:&quot;);</b>
+<b class="nc">&nbsp;    private JLabel newSensorType = new JLabel(&quot;Sensor Type:&quot;);</b>
+<b class="nc">&nbsp;    private JTextField newSensorNameField = new JTextField();</b>
+<b class="nc">&nbsp;    private JComboBox newSensorTypeDropdown = new JComboBox(SensorType.values());</b>
+<b class="nc">&nbsp;    private JButton addNewSensorButton = new JButton(&quot;Add New Sensor&quot;);</b>
+&nbsp;
+&nbsp;    private JPanel sensorListPanel;
+&nbsp;    private JPanel newSensorPanel;
+&nbsp;
+&nbsp;    public SensorPanel(SecurityService securityService) {
+<b class="nc">&nbsp;        super();</b>
+<b class="nc">&nbsp;        setLayout(new MigLayout());</b>
+<b class="nc">&nbsp;        this.securityService = securityService;</b>
+<b class="nc">&nbsp;        securityService.addStatusListener(this);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        panelLabel.setFont(StyleService.HEADING_FONT);</b>
+<b class="nc">&nbsp;        addNewSensorButton.addActionListener(e -&gt;</b>
+<b class="nc">&nbsp;                addSensor(new Sensor(newSensorNameField.getText(),</b>
+<b class="nc">&nbsp;                        SensorType.valueOf(newSensorTypeDropdown.getSelectedItem().toString()))));</b>
+&nbsp;
+<b class="nc">&nbsp;        newSensorPanel = buildAddSensorPanel();</b>
+<b class="nc">&nbsp;        sensorListPanel = new JPanel();</b>
+<b class="nc">&nbsp;        sensorListPanel.setLayout(new MigLayout());</b>
+&nbsp;
+<b class="nc">&nbsp;        updateSensorList(sensorListPanel);</b>
+&nbsp;
+<b class="nc">&nbsp;        add(panelLabel, &quot;wrap&quot;);</b>
+<b class="nc">&nbsp;        add(newSensorPanel, &quot;span&quot;);</b>
+<b class="nc">&nbsp;        add(sensorListPanel, &quot;span&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Builds the panel with the form for adding a new sensor
+&nbsp;     */
+&nbsp;    private JPanel buildAddSensorPanel() {
+<b class="nc">&nbsp;        JPanel p = new JPanel();</b>
+<b class="nc">&nbsp;        p.setLayout(new MigLayout());</b>
+<b class="nc">&nbsp;        p.add(newSensorName);</b>
+<b class="nc">&nbsp;        p.add(newSensorNameField, &quot;width 50:100:200&quot;);</b>
+<b class="nc">&nbsp;        p.add(newSensorType);</b>
+<b class="nc">&nbsp;        p.add(newSensorTypeDropdown, &quot;wrap&quot;);</b>
+<b class="nc">&nbsp;        p.add(addNewSensorButton, &quot;span 3&quot;);</b>
+<b class="nc">&nbsp;        return p;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Requests the current list of sensors and updates the provided panel to display them. Sensors
+&nbsp;     * will display in the order that they are created.
+&nbsp;     * @param p The Panel to populate with the current list of sensors
+&nbsp;     */
+&nbsp;    private void updateSensorList(JPanel p) {
+<b class="nc">&nbsp;        p.removeAll();</b>
+<b class="nc">&nbsp;        securityService.getSensors().stream().sorted().forEach(s -&gt; {</b>
+<b class="nc">&nbsp;            JLabel sensorLabel = new JLabel(String.format(&quot;%s(%s): %s&quot;, s.getName(),  s.getSensorType().toString(),(s.getActive() ? &quot;Active&quot; : &quot;Inactive&quot;)));</b>
+<b class="nc">&nbsp;            JButton sensorToggleButton = new JButton((s.getActive() ? &quot;Deactivate&quot; : &quot;Activate&quot;));</b>
+<b class="nc">&nbsp;            JButton sensorRemoveButton = new JButton(&quot;Remove Sensor&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            sensorToggleButton.addActionListener(e -&gt; setSensorActivity(s, !s.getActive()) );</b>
+<b class="nc">&nbsp;            sensorRemoveButton.addActionListener(e -&gt; removeSensor(s));</b>
+&nbsp;
+&nbsp;            //hard code some sizes, tsk tsk
+<b class="nc">&nbsp;            p.add(sensorLabel, &quot;width 300:300:300&quot;);</b>
+<b class="nc">&nbsp;            p.add(sensorToggleButton, &quot;width 100:100:100&quot;);</b>
+<b class="nc">&nbsp;            p.add(sensorRemoveButton, &quot;wrap&quot;);</b>
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        repaint();</b>
+<b class="nc">&nbsp;        revalidate();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Asks the securityService to change a sensor activation status and then rebuilds the current sensor list
+&nbsp;     * @param sensor The sensor to update
+&nbsp;     * @param isActive The sensor&#39;s activation status
+&nbsp;     */
+&nbsp;    private void setSensorActivity(Sensor sensor, Boolean isActive) {
+<b class="nc">&nbsp;        securityService.changeSensorActivationStatus(sensor, isActive);</b>
+<b class="nc">&nbsp;        updateSensorList(sensorListPanel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a sensor to the securityService and then rebuilds the sensor list
+&nbsp;     * @param sensor The sensor to add
+&nbsp;     */
+&nbsp;    private void addSensor(Sensor sensor) {
+<b class="nc">&nbsp;        if(securityService.getSensors().size() &lt; 4) {</b>
+<b class="nc">&nbsp;            securityService.addSensor(sensor);</b>
+<b class="nc">&nbsp;            updateSensorList(sensorListPanel);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            JOptionPane.showMessageDialog(null, &quot;To add more than 4 sensors, please subscribe to our Premium Membership!&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Remove a sensor from the securityService and then rebuild the sensor list
+&nbsp;     * @param sensor The sensor to remove
+&nbsp;     */
+&nbsp;    private void removeSensor(Sensor sensor) {
+<b class="nc">&nbsp;        securityService.removeSensor(sensor);</b>
+<b class="nc">&nbsp;        updateSensorList(sensorListPanel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void notify(AlarmStatus status) {
+&nbsp;        // no behavior necessary
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void catDetected(boolean catDetected) {
+&nbsp;        // no behavior necessary
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void sensorStatusChanged() {
+<b class="nc">&nbsp;        updateSensorList(sensorListPanel);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-05 01:37</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ControlPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.udacity.catpoint.security.application</a>
+</div>
+
+<h1>Coverage Summary for Class: ControlPanel (com.udacity.catpoint.security.application)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ControlPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.udacity.catpoint.security.application;
+&nbsp;
+&nbsp;import com.udacity.catpoint.security.data.ArmingStatus;
+&nbsp;import com.udacity.catpoint.security.service.SecurityService;
+&nbsp;import net.miginfocom.swing.MigLayout;
+&nbsp;
+&nbsp;import javax.swing.*;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * JPanel containing the buttons to manipulate arming status of the system.
+&nbsp; */
+&nbsp;public class ControlPanel extends JPanel {
+&nbsp;
+&nbsp;    private SecurityService securityService;
+&nbsp;    private Map&lt;ArmingStatus, JButton&gt; buttonMap;
+&nbsp;
+&nbsp;
+&nbsp;    public ControlPanel(SecurityService securityService) {
+<b class="nc">&nbsp;        super();</b>
+<b class="nc">&nbsp;        setLayout(new MigLayout());</b>
+<b class="nc">&nbsp;        this.securityService = securityService;</b>
+&nbsp;
+<b class="nc">&nbsp;        JLabel panelLabel = new JLabel(&quot;System Control&quot;);</b>
+<b class="nc">&nbsp;        panelLabel.setFont(StyleService.HEADING_FONT);</b>
+&nbsp;
+<b class="nc">&nbsp;        add(panelLabel, &quot;span 3, wrap&quot;);</b>
+&nbsp;
+&nbsp;        //create a map of each status type to a corresponding JButton
+<b class="nc">&nbsp;        buttonMap = Arrays.stream(ArmingStatus.values())</b>
+<b class="nc">&nbsp;                .collect(Collectors.toMap(status -&gt; status, status -&gt; new JButton(status.getDescription())));</b>
+&nbsp;
+&nbsp;        //add an action listener to each button that applies its arming status and recolors all the buttons
+<b class="nc">&nbsp;        buttonMap.forEach((k, v) -&gt; {</b>
+<b class="nc">&nbsp;            v.addActionListener(e -&gt; {</b>
+<b class="nc">&nbsp;                securityService.setArmingStatus(k);</b>
+<b class="nc">&nbsp;                buttonMap.forEach((status, button) -&gt; button.setBackground(status == k ? status.getColor() : null));</b>
+&nbsp;            });
+&nbsp;        });
+&nbsp;
+&nbsp;        //map order above is arbitrary, so loop again in order to add buttons in enum-order
+<b class="nc">&nbsp;        Arrays.stream(ArmingStatus.values()).forEach(status -&gt; add(buttonMap.get(status)));</b>
+&nbsp;
+<b class="nc">&nbsp;        ArmingStatus currentStatus = securityService.getArmingStatus();</b>
+<b class="nc">&nbsp;        buttonMap.get(currentStatus).setBackground(currentStatus.getColor());</b>
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-07-05 01:37</div>
+</div>
+</body>
+</html>
